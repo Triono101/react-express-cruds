@@ -13,76 +13,54 @@ class Detail extends Component {
   }
 
   componentDidMount() {
-    axios.get('http://127.0.0.1:3001/api/product')
-    .then(res => {
-      this.setState({product: res.data});
-      console.log(this.state.product);
-    });
-  }
+    axios.get(`http://127.0.0.1:3001/api/product`)
+      .then(res => {
+        this.setState({product: res.data});
+        console.log(this.state.product);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    };
 
   render() {
-    return(
+    return (
       <div className="main">
-        <Link to="/" className="btn btn-primary">Kembali</Link>
         <div>
+          <Link to="/" className="btn btn-primary">Kembali</Link>
         </div>
+        <h1>Product detail</h1>
         <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Price</th>
-            </tr>
-          </thead>
           <tbody>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Product ID</th>
+            <th>Price</th>
+            <th>Stock</th>
             {
-              this.state.product.map((data, key) => {
+              this.state.product.map((data, index) => {
                 return(
-                  <tr key={key}>
-                    <td>{key+1}</td>
+                  <tr key={index}>
+                    <td>{index+1}</td>
                     <td>{data.name}</td>
+                    <td>{data._id}</td>
                     <td>{new Intl.NumberFormat("id-ID", {
                       style: "currency",
                       currency: "IDR"
                     }).format(data.price)}</td>
+                    <td>{data.stock}</td>
                   </tr>
                 )
               })
             }
           </tbody>
         </table>
+        <footer className="footer">
+          <p>"Belum bisa menggunakan syntax cara menampilkan detail salah satu produk ..."</p>
+        </footer>
       </div>
     )
-  };
+  }
 };
-
-
-//   return (
-//     <div className="main">
-//       <Link to="/" className="btn btn-primary">Kembali</Link>
-
-//       <table className="table">
-//         <tbody>
-//           <tr>
-//             <td>ID</td>
-//             <td>: asdasdasdasd</td>
-//           </tr>
-//           <tr>
-//             <td>Name</td>
-//             <td>: Laptop</td>
-//           </tr>
-//           <tr>
-//             <td>Price</td>
-//             <td>: Rp. 20.000.000</td>
-//           </tr>
-//           <tr>
-//             <td>Stock</td>
-//             <td>: 10</td>
-//           </tr>
-//         </tbody>
-//       </table>
-//     </div>
-//   )
-// }
 
 export default Detail;

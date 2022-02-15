@@ -1,82 +1,55 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import './index.scss';
+import axios from 'axios';
 import Input from '../../components/Input';
+import { Alert } from 'react-bootstrap';
+import { useHistory } from "react-router-dom";
 
-class Tambah extends Component {
+const Tambah = () => {
+    const [name, setName] = useState('');
+    const [price, setPrice] = useState('');
+    const [stock, setStock] = useState('');
+    const [status, setStatus] = useState('');
 
-  constructor(props) {
-    super(props)
+    const [validation, setValidation] = useState({});
+    const history = useHistory();
 
-    // Setting up functions
-    this.onChangeName = this.onChangeName.bind(this);
-    this.onChangePrice = this.onChangePrice.bind(this);
-    this.onChangeStock = this.onChangeStock.bind(this);
-    this.onChangeStatus = this.onChangeStatus.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    const submitProduct = (data) => {
+      axios.post('http://localhost:3001/api/product/', {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)})
+        .then((res) => res.json)
+          history.push('/')
+        .catch((error) => {
+        setValidation(error.response.data);
+    });
+    };
 
-    // Setting up state
-    this.state = {
-      name: '',
-      price: '',
-      stock: '',
-      status: ''
-    }
-  }
-
-  onChangeName = (e) => {
-    this.setState({ name: e.target.value })
-  };
-
-  onChangePrice = (e) => {
-    this.setState({ price: e.target.value })
-  };
-
-  onChangeStock = (e) => {
-    this.setState({ stock: e.target.value })
-  };
-
-  onChangeStatus = (e) => {
-    this.setState({ status: e.target.value })
-  }
-
-onSubmit(e) {
-  e.preventDefault()
-
-  const productObject = {
-    name: this.state.name,
-    price: this.state.price,
-    stock: this.state.stock,
-    status: this.state.status
-  };
-  axios.post('http://127.0.0.1:3001/product', productObject)
-    .then(res => console.log(res.data));
-  this.setState({ name: '', price: '', stock: '', status: '' })
-}
-
-  render() {
     return (
       <div className="main">
         <div className="card">
           <h2>Tambah Produk</h2>
           <br />
-          <form onSubmit={this.onSubmit} method="POST">
-
-            <Input name="name" label="Nama" type="text" value={this.state.name} onChange={this.onChangeName} placeholder="Nama Produk..."/>
-
-            <Input name="price" label="Harga" type="number" value={this.state.price} onChange={this.onChangePrice} placeholder="Harga Produk..."/>
-
-            <Input name="stock" label="Stock" type="number" value={this.state.stock} onChange={this.onChangeStock} placeholder="Stock Produk..."/>
-
-            <Input name="status" type="checkbox" label="Active" value={this.state.status} onChange={this.onChangeStatus}/>
-
-            <button type="submit" id="buttonID" className="btn btn-primary">Simpan</button>
-
+            {
+              validation.errors &&
+                <Alert variant="danger">
+                    <ul class="mt-0 mb-0">
+                        { validation.errors.map((error, index) => (
+                            <li key={index}>{ `${error.param} : ${error.msg}` }</li>
+                        )) }
+                    </ul>
+                </Alert>
+            }
+          <form onSubmit={ submitProduct }>
+            <Input name="name" type="text" placeholder="Nama Produk..." label="Nama" value={name} onChange={(e) => setName(e.target.value)}/>
+            <Input name="price" type="number" placeholder="Harga Produk..." label="Harga" value={price} onChange={(e) => setPrice(e.target.value)}/>
+            <Input name="Stock" type="number" placeholder="Stock Produk..." label="Stock" value={stock} onChange={(e) => setStock(e.target.value)}/>
+            <Input name="status" type="checkbox" label="Active" value={status} onChange={(e) => setStatus(e.target.value)}/>
+            <button type="submit" className="btn btn-primary">Simpan</button>
           </form>
         </div>
       </div>
     )
-  };
-};
+  }
 
 export default Tambah;

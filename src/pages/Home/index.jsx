@@ -38,10 +38,10 @@ class Home extends Component {
           </thead>
           <tbody>
             {
-              this.state.product.map((data, key) => {
+              this.state.product.map((data, index) => {
                 return(
-                  <tr key={key}>
-                    <td>{key+1}</td>
+                  <tr key={index}>
+                    <td>{index+1}</td>
                     <td>{data.name}</td>
                     <td>{new Intl.NumberFormat("id-ID", {
                       style: "currency",
